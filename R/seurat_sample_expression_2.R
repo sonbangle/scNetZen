@@ -1,6 +1,12 @@
+
+requireNamespace("Matrix", quietly = TRUE)
+requireNamespace("optparse", quietly = TRUE)
+requireNamespace("Rmpi", quietly = TRUE)
 library(Matrix)
 library(optparse)
 library(Rmpi)
+
+
 print("Starting extraction single cell gene expresion profiles")
 
 # run mpi
@@ -43,6 +49,20 @@ mpi.bcast.cmd(host <- mpi.get.processor.name())
 mpi.bcast.cmd(library("Matrix"))
 
 
+#' Title
+#'
+#' @param aggregate_out_dir
+#' @param min_n_reads_per_cluster
+#' @param n_replicates
+#' @param outdir
+#' @param organism
+#' @param clusters_file
+#' @param extract_sample_cluster
+#'
+#' @return
+#' @export
+#'
+#' @examples
 extract_ges = function(aggregate_out_dir  = ".",
                        min_n_reads_per_cluster = 20000,
                        n_replicates = 5,
@@ -57,9 +77,12 @@ extract_ges = function(aggregate_out_dir  = ".",
   # Input aggreated_out_dir: "outs" Folder of aggreated sample, parent of filtered_feature_bc_matrix
   # Clusters_file: file with cluster annotation, by default using 10X cluster but, can be used to provided customised clusters such as from Seurat. Table with 2 columns Barcode, Cluster with header.
   #extract_sample_cluster: TRUE: extract  cluster expression for each sample, cluster. FALSE: extract only sample expression)
+
+
   dir.create(outdir)
 
   # Broadcasting at the beginning so that slaves can read the gene expression file early.
+
   print("Beginning broadcasting functions and libraries to slave")
 
   mpi.bcast.Robj2slave(extract_cluster_ges)
