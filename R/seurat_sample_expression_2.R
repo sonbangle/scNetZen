@@ -870,5 +870,5 @@ option_list <- list(
 # )
 #
 #
-# mpi.quit()
-# quit()
+mpi.quit()
+quit()
