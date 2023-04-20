@@ -6,7 +6,7 @@ library(Matrix)
 library(optparse)
 library(Rmpi)
 
-print("some update")
+print("some update here")
 
 print("Starting extraction single cell gene expresion profiles")
 
