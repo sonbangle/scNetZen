@@ -1,3 +1,9 @@
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
 slave_control = function()
   #Manage the slave processing
 {

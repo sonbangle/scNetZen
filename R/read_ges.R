@@ -1,3 +1,9 @@
+#' Title
+#'
+#' @param aggregate_out_dir
+#' @return
+#'
+#' @examples
 read_ges = function(aggregate_out_dir)
 {
   matrix_dir = paste0(aggregate_out_dir , "/filtered_feature_bc_matrix")
@@ -6,7 +12,7 @@ read_ges = function(aggregate_out_dir)
   features.path <- paste0(matrix_dir, "/features.tsv.gz")
   matrix.path <- paste0(matrix_dir, "/matrix.mtx.gz")
   print("Reading filtered_feature_bc_matrix file, please wait")
-  ges <- readMM(file = matrix.path)
+  ges <- Matrix::readMM(file = matrix.path)
   print("Gene expression profile matrix has been  read")
   feature.names = read.delim(features.path,
                              header = FALSE,

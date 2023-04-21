@@ -1,4 +1,14 @@
 
+#' Title
+#'
+#' @param counts
+#' @param outdir
+#' @param organism
+#'
+#' @return
+#' @export
+#'
+#' @examples
 normalized_and_export_counts_data = function(counts = NULL,
                                              outdir = ".",
                                              organism = "human")
@@ -54,14 +64,21 @@ normalized_and_export_counts_data = function(counts = NULL,
 
 
 
+#' Title
+#'
+#' @param counts
+#' @param organism Name of organism such as "human" or "mouse". Used for translation from ENSEMBL ID to gene name.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_normalized_data = function(counts = NULL,
                                organism = "human")
   # Convert counts data into cpm, rpkm, tpm data
   # Input: counts is dataframe where column 1 contain Ensemble ID , other columns are samples, rows are number of reads
   # Output: list of normalized data, where for each count type in c(count, cpm, rpkm, tpm) there are two types of normalized data: by Ensemble ID and by HUGO ID. Have not tested for mouse yet.
 {
-  library(biomaRt)
-  library(edgeR)
   print(counts[1:5, 1:5])
   ensembl_list <- counts[, 1]
   if (organism == "human")
@@ -75,7 +92,7 @@ get_normalized_data = function(counts = NULL,
   if (!exists("mart"))
   {
     mart <-
-      useMart(
+      biomaRt::useMart(
         "ensembl",
         dataset = mart_dataset,
         host = "https://www.ensembl.org"
@@ -86,7 +103,7 @@ get_normalized_data = function(counts = NULL,
   {gene_name_field = "hgnc_symbol"}else
   {gene_name_field = "external_gene_name"}
 
-  gene_coords = getBM(
+  gene_coords = biomaRt::getBM(
     attributes = c(
       gene_name_field,
       "ensembl_gene_id",
@@ -120,8 +137,8 @@ get_normalized_data = function(counts = NULL,
   repeated_hgnc_symbols  = as.vector(repeated_hgnc_symbols)
 
   x = counts[gene_coords$ensembl_gene_id, 2:ncol(counts)]
-  x_rpkm <- rpkm(x, gene_coords$Length * 1000)
-  x_cpm = cpm(x)
+  x_rpkm <- edgeR::rpkm(x, gene_coords$Length * 1000)
+  x_cpm = edgeR::cpm(x)
   gene_coords[gene_coords$hgnc_symbol %in% repeated_hgnc_symbols, gene_name_field] = gene_coords[gene_coords$hgnc_symbol %in% repeated_hgnc_symbols, "ensembl_gene_id"]
 
 

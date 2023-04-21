@@ -1,41 +1,5 @@
 
 
-
-start_mpi = function()
-
-{
-  print("github updated ")
-
-  print("Starting extraction single cell gene expresion profiles")
-
-  # run mpi
-
-  print("beginning mpi")
-  closed_slaves <- 0
-  ns <- mpi.universe.size() - 1
-  print(paste("Number of slaves:", ns))
-  if (ns == 0)
-    #desktop
-  {
-    ns = 1
-  }
-
-  n_current_slaves =  mpi.comm.size()
-  print(paste("Current number of unclosed slaves:",  n_current_slaves))
-  n_slaves_to_spawn = ns - n_current_slaves
-  if (n_slaves_to_spawn > 0)
-  {
-    mpi.spawn.Rslaves(nslaves = n_slaves_to_spawn)
-
-  }
-
-  # Tell all slaves to return a message identifying themselves
-  mpi.bcast.cmd(id <- mpi.comm.rank())
-  mpi.bcast.cmd(ns <- mpi.comm.size())
-  mpi.bcast.cmd(host <- mpi.get.processor.name())
-  mpi.bcast.cmd(library("Matrix"))
-}
-
 .Last <- function() {
   # In case R exits unexpectedly, have it automatically clean up
   # resources taken up by Rmpi (slaves, memory, etc...)
@@ -46,12 +10,10 @@ start_mpi = function()
       mpi.close.Rslaves()
     }
     print("Please use mpi.quit() to quit R")
-    .Call("mpi_finalize")
+    #.Call("mpi_finalize")
+    mpi.finalize()
   }
 }
-
-
-
 
 #' Title
 #'
@@ -67,7 +29,7 @@ start_mpi = function()
 #' @export
 #'
 #' @examples
-extract_ges = function(aggregate_out_dir  = ".",
+extract_ges_mpi = function(aggregate_out_dir  = ".",
                        min_n_reads_per_cluster = 20000,
                        n_replicates = 5,
                        outdir = "NETZEN_analysis",
@@ -81,8 +43,7 @@ extract_ges = function(aggregate_out_dir  = ".",
   # Input aggreated_out_dir: "outs" Folder of aggreated sample, parent of filtered_feature_bc_matrix
   # Clusters_file: file with cluster annotation, by default using 10X cluster but, can be used to provided customised clusters such as from Seurat. Table with 2 columns Barcode, Cluster with header.
   #extract_sample_cluster: TRUE: extract  cluster expression for each sample, cluster. FALSE: extract only sample expression)
-
-
+  ns = start_mpi()
   dir.create(outdir)
 
   # Broadcasting at the beginning so that slaves can read the gene expression file early.
@@ -511,8 +472,14 @@ extract_ges = function(aggregate_out_dir  = ".",
     organism = organism
   )
 
+  mpi.quit()
+  quit()
 
 }
+
+
+
+
 
 
 
