@@ -128,7 +128,9 @@ extract_ges_mpi = function(aggregate_out_dir  = ".",
         cluster_barcodes = as.vector(cluster_assignments[cluster_assignments$Cluster == uniqclusters[j], "Barcode"])
         n_barcodes = length(cluster_barcodes)
         sample_cluster_matrix[j, i] = n_barcodes
-        tasks[[(i - 1) * n_clusters + j]] = list(
+        task_id = (i - 1) * n_clusters + j
+        tasks[[task_id]] = list(
+          task_id = task_id,
           sample = sample,
           cluster = uniqclusters[j],
           cluster_barcodes = cluster_barcodes,
@@ -146,7 +148,8 @@ extract_ges_mpi = function(aggregate_out_dir  = ".",
         cluster_barcodes = sample_barcodes,
         i = i,
         j = 1,
-        n_replicates = n_replicates
+        n_replicates = n_replicates,
+        task_id = i
       )
     }
 
@@ -254,6 +257,7 @@ extract_ges_mpi = function(aggregate_out_dir  = ".",
 
   results = list()
   done_tasks = 0
+  current_task = 1
   while (closed_slaves < ns) {
     # Receive a message from a slave
     junk <- 0
@@ -266,24 +270,25 @@ extract_ges_mpi = function(aggregate_out_dir  = ".",
     if (tag == 1) {
       # slave ready for a task. Give it the next task, or tell it tasks are done.
       print(paste("n task remained:" , length(tasks)))
-      if (length(tasks) > 0) {
+      if (current_task <= length(tasks)) {
         # Send a task, and then remove it from the task list
-        mpi.send.Robj(tasks[[1]], slave_id, 1)
+        mpi.send.Robj(tasks[[current_task]], slave_id, 1)
+        current_task = current_task + 1
 
-        tasks[[1]] <- NULL
       }
       else {
         mpi.send.Robj(junk, slave_id, 2)
       }
     } else if (tag == 2) {
       # Do something with the results. Store in the data structure
-
-      sample = message[["sample"]]
-      cluster = message[["cluster"]]
+      task_id = message[task_id]
+      task = tasks[[task_id]]
+      sample = task[["sample"]]
+      cluster = task[["cluster"]]
       cluster_ges_sum = message[["cluster_ges_sum"]]
       cluster_ges_sum_replicates = message[["cluster_ges_sum_replicates"]]
-      sample_index = message[["sample_index"]]
-      cluster_index = message[["cluster_index"]]
+      sample_index = task[["sample_index"]]
+      cluster_index = task[["cluster_index"]]
       print(sample)
       print(cluster)
       print(paste("sample index", sample_index))

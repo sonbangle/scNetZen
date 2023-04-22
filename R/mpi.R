@@ -2,7 +2,6 @@
 #' Title
 #'
 #' @return ns number of slave
-#' @export
 #'
 #' @examples
 #'

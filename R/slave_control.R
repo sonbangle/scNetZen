@@ -1,7 +1,6 @@
 #' Title
 #'
 #' @return
-#' @export
 #'
 #' @examples
 slave_control = function()
@@ -23,7 +22,7 @@ slave_control = function()
     if (tag == 1) {
       #task exits
       print("processing task")
-      results = extract_cluster_ges(task, ges)
+      results = extract_task_ges(task, ges)
       print("done for this task, sending back result")
       # Send a results message back to the master, tag: done_task
       mpi.send.Robj(results, 0, 2)
