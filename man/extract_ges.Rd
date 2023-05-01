@@ -10,7 +10,7 @@ extract_ges(barcodes, ges, barcode_group_name, n_replicates = 5)
 \arguments{
 \item{barcodes}{the barcodes of single cells in the group of interest.}
 
-\item{ges}{gene expression profile}
+\item{ges}{gene expression profile, a sparse matrix of class dgTMatrix or data frame, row are genes, columns are cell barcodes}
 
 \item{barcode_group_name}{barcode group name}
 

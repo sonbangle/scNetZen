@@ -4,7 +4,7 @@
 \alias{extract_task_ges}
 \title{Title}
 \usage{
-extract_task_ges(task, ges)
+extract_task_ges(task, ges, n_replicates = 5)
 }
 \arguments{
 \item{task}{the task to calculate expression, a list of barcodes, n_replicates, barcode_group_name}

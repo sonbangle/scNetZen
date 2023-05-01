@@ -79,7 +79,7 @@ get_normalized_data = function(counts = NULL,
   # Input: counts is dataframe where column 1 contain Ensemble ID , other columns are samples, rows are number of reads
   # Output: list of normalized data, where for each count type in c(count, cpm, rpkm, tpm) there are two types of normalized data: by Ensemble ID and by HUGO ID. Have not tested for mouse yet.
 {
-  print(counts[1:5, 1:5])
+  print("get normalized data function")
   ensembl_list <- counts[, 1]
   if (organism == "human")
   {

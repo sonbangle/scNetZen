@@ -1,18 +1,16 @@
 #' Title
 #'
 #' @param FUN
-#'
+#'@param dot.arg: additional argument list for function, equivalent to ...
 #' @return
 #'
 #' @examples
-slave_control = function(FUN, ...)
+slave_control = function(FUN, dot.arg=NULL)
   #Manage the slave processing
 {
   # sent:  1=ready_for_task, 2=done_task, 3=exiting received:  1=task, 2=done_tasks
-
   junk <- 0
   done <- 0 # Flag if all tasks are done
-
   while (done != 1) {
     # Signal being ready to receive a new task
     mpi.send.Robj(junk, 0, 1) # Send to Master: ready for task, request task
@@ -25,7 +23,9 @@ slave_control = function(FUN, ...)
       #results = extract_task_ges(task, ges)
       task_id = task[["id"]]
       task_data = task[["data"]]
-      result = FUN(task_data,...)
+
+      #result = FUN(task_data,...)
+      result = try(do.call(FUN, c(list(task_data), dot.arg),TRUE))
       result = list(result=result, id =task_id)
       # Send a results message back to the master, tag: done_task
       mpi.send.Robj(result, 0, 2) # send task result
@@ -51,19 +51,20 @@ slave_control = function(FUN, ...)
 #' @export
 #'
 #' @examples
-TaskApply = function(tasks, fun)
+TaskApply = function(tasks, fun, ...)
 {
-
+  length(list(...)) #test for any non existing R objects
+  dot.arg=list(...)
   #ns <- mpi.universe.size() - 1
   ns = mpi.comm.size() -1
-  print(paste("Number of slaves:",  ns))
+  #print(paste("Number of slaves:",  ns))
   closed_slaves <- 0
   n_tasks = length(tasks)
   results = as.list(integer(n_tasks))
   current_task = 1
   mpi.bcast.Robj2slave(fun)
-  mpi.bcast.cmd(slave_control(fun))
-
+  mpi.bcast.Robj2slave(dot.arg)
+  mpi.bcast.cmd(slave_control(fun, dot.arg))
   while (closed_slaves < ns) {
     # Receive a message from a slave
     junk <- 0
@@ -72,10 +73,10 @@ TaskApply = function(tasks, fun)
     message_info <- mpi.get.sourcetag()
     slave_id <- message_info[1]
     tag <- message_info[2]
-    # print(paste("get mssg from :", slave_id))
-    # print(paste("tag received:", tag))
-    # print("message:")
-    # print(message)
+    #print(paste("get mssg from :", slave_id))
+    #print(paste("tag received:", tag))
+    #print("message:")
+    #print(message)
 
     if (tag == 1) {
       # slave ready for a task. Give it the next task, or tell it tasks are done.
@@ -101,8 +102,61 @@ TaskApply = function(tasks, fun)
     }
   }
 
-
-
   return(results)
 
 }
+
+
+
+#' Title
+#'
+#' @return ns number of slave
+#'
+#' @examples
+#'
+#'
+start_mpi = function()
+{
+
+  # run mpi
+
+
+  ns <- mpi.universe.size() - 1
+
+  if (ns == 0)
+    #desktop
+  {
+    ns = 2
+  }
+
+  print(paste("Number of slaves:", ns))
+
+  n_current_slaves =  mpi.comm.size() -1
+  if (n_current_slaves <0)
+  {
+    n_current_slaves = 0
+  }
+  print(paste("Current number of unclosed slaves:",  n_current_slaves))
+  n_slaves_to_spawn = ns - n_current_slaves
+  if (n_slaves_to_spawn > 0)
+  {
+    print("beginning spawning mpi")
+    mpi.spawn.Rslaves(nslaves = n_slaves_to_spawn)
+
+
+  n_current_slaves =  mpi.comm.size() -1
+  print(paste("Current number of unclosed slaves:",  n_current_slaves))
+
+  # Tell all slaves to return a message identifying themselves
+  mpi.bcast.cmd(id <- mpi.comm.rank())
+  mpi.bcast.cmd(print(paste("rank:", id)))
+  mpi.bcast.cmd(ns <- mpi.comm.size())
+  mpi.bcast.cmd(host <- mpi.get.processor.name())
+  mpi.bcast.Robj2slave(slave_control)
+  #mpi.bcast.Robj2slave(read_ges)
+  #mpi.bcast.Robj2slave(extract_task_ges)
+  print("Done starting mpi")
+  }
+  return(ns)
+}
+

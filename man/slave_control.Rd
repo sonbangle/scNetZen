@@ -4,10 +4,10 @@
 \alias{slave_control}
 \title{Title}
 \usage{
-slave_control(FUN, ...)
+slave_control(FUN, dot.arg = NULL)
 }
 \arguments{
-\item{FUN}{}
+\item{dot.arg:}{additional argument list for function, equivalent to ...}
 }
 \description{
 Title

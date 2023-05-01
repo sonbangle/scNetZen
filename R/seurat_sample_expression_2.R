@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-extract_ges_mpi = function(aggregate_out_dir  = ".",
+extract_ges_mpi_old = function(aggregate_out_dir  = ".",
                        min_n_reads_per_cluster = 20000,
                        n_replicates = 5,
                        outdir = "NETZEN_analysis",

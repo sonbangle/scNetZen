@@ -6,7 +6,7 @@
 Parallelly apply the function to list, similar to lapply but with mpi version
 Initialization and closing mpi should be done manually so that each slave can be prepared(loading the dataset) before processing the data}
 \usage{
-TaskApply(tasks, fun)
+TaskApply(tasks, fun, ...)
 }
 \arguments{
 \item{tasks}{the list of data, each element is a data to apply function}

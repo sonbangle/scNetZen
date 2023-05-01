@@ -17,6 +17,13 @@ get_data = function(aggregate_out_dir)
   return(barcode.names)
 }
 
+get_barcode_names_from_ges_list = function(ges_list)
+{
+  barcode.names = ges_list[[3]]
+  barcode.names$samples = substr(barcode.names$V1, 18, nchar(barcode.names$V1))
+  return(barcode.names)
+}
+
 
 #' Title
 #'
@@ -41,8 +48,7 @@ get_task_from_aggregation_samples = function(aggregation_samples_file ="aggregat
 
     tasks[[i]] = list(
       barcodes = sample_barcodes,
-      barcode_group_name = sample,
-      n_replicates = n_replicates
+      barcode_group_name = sample
     )
   }
   return(tasks)

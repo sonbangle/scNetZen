@@ -6,7 +6,8 @@
 \usage{
 get_task_from_aggregation_samples(
   aggregation_samples_file = "aggregation.csv",
-  barcode.names
+  barcode.names,
+  n_replicates = 5
 )
 }
 \description{
