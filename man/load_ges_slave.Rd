@@ -4,7 +4,7 @@
 \alias{load_ges_slave}
 \title{Title}
 \usage{
-load_ges_slave(aggregate_out_dir, n_replicates = 5)
+load_ges_slave(aggregate_out_dir)
 }
 \arguments{
 \item{aggregate_out_dir}{Aggregation outdir, parent folder of folder filtered_feature_bc_matrix}

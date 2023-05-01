@@ -6,10 +6,9 @@
 \usage{
 extract_ges_parallel(
   tasks,
-  min_n_reads_per_cluster = 20000,
-  outdir = "NETZEN_analysis",
-  organism = "human",
-  method = "mpi"
+  method = "mpi",
+  close_slaves = TRUE,
+  n_replicates = 5
 )
 }
 \arguments{
