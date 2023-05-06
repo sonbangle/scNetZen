@@ -1,7 +1,7 @@
 test_that("extract ges  by lapply works", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   #load_ges_slave(aggregate_out_dir, n_replicates = 5)
@@ -16,7 +16,7 @@ test_that("extract ges  by lapply works", {
 test_that("extract ges  by mc lapply works", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   ges<-read_ges(aggregate_out_dir)[[1]]
@@ -30,7 +30,7 @@ test_that("extract ges  by mc lapply works", {
 test_that("extract ges mpi works", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   load_ges_slave(aggregate_out_dir)
@@ -45,7 +45,7 @@ test_that("extract ges mpi works", {
 test_that("extract ges  by lapply works for n_replicates =2 ", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   #load_ges_slave(aggregate_out_dir, n_replicates = 5)
@@ -61,7 +61,7 @@ test_that("extract ges  by lapply works for n_replicates =2 ", {
 test_that("extract ges  by mc lapply works for n_replicates =2  ", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   ges<-read_ges(aggregate_out_dir)[[1]]
@@ -76,7 +76,7 @@ test_that("extract ges  by mc lapply works for n_replicates =2  ", {
 test_that("extract ges mpi works for n_replicates =2 ", {
 
   aggregate_out_dir = "~/Downloads/count"
-  barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   aggregation_samples_file = "~/Downloads/count/aggregation.csv"
   tasks = get_task_from_aggregation_samples(aggregation_samples_file = aggregation_samples_file, barcode.names = barcode.names)
   load_ges_slave(aggregate_out_dir)

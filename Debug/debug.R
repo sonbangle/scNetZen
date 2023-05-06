@@ -1,16 +1,28 @@
-#extract_ges_obj = readRDS("/home/sonle/Downloads/scNetZen/tests/extract_ges_obj.RDS")
-#make_data_frame_from_extract_ges_obj(extract_ges_obj,outdir = "NETZEN_analysis", organism = "human", n_replicates = 5 )
 
-extract_ges_obj = readRDS("/home/sonle/Downloads/scNetZen/tests/extract_ges_obj.RDS")
-counts = make_count_data_frame_from_extract_ges_obj(extract_ges_obj)
-cell_group_ges = counts[["counts"]]
-cell_group_ges_replicates = counts[["count_replicates"]]
 
+
+aggregation_samples_file = "~/Downloads/count/aggregation.csv"
 aggregate_out_dir = "~/Downloads/count"
-gene_names <-read_ges(aggregate_out_dir)[[2]][2]
+barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
+clusters_file = "~/Downloads/count/analysis/clustering/graphclust/clusters.csv"
+organism = "mouse"
+outdir =  "~/Downloads/count/GES"
+barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
+tasks = get_task_for_samples_clusters(aggregation_samples_file = aggregation_samples_file , clusters_file = clusters_file,  barcode.names = barcode.names)[["tasks"]]
+saveRDS(tasks, "./Debug/tasks.RDS" )
 
-out = get_formated_ges_from_counts(cell_group_ges,  cell_group_ges_replicates, gene_names, min_n_reads_per_cell_group= 20000)
-for (df in out)
-{
-  print(df[1:5,1:3])
-}
+
+prefix = "sample_cluster"
+method = "singlecore"
+n_replicates = 5
+out = get_cell_group_gene_expression_from_tasks(tasks,
+                                                aggregate_out_dir,
+                                                outdir,
+                                                prefix,
+                                                organism,
+                                                method = method,
+                                                close_slaves = close_slaves,
+                                                n_replicates = n_replicates,
+                                                min_n_reads_per_cell_group = min_n_reads_per_cell_group)
+
+

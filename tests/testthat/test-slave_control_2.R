@@ -1,7 +1,7 @@
 
 test_that("slave control can receive function", {
   aggregate_out_dir = "~/Downloads/count"
-  #barcode.names = get_data(aggregate_out_dir = aggregate_out_dir)
+  #barcode.names = get_barcode_names(aggregate_out_dir = aggregate_out_dir)
   #aggregation_samples_file = "~/Downloads/count/aggregation.csv"
 
   #load_ges_slave(aggregate_out_dir, n_replicates = 5)

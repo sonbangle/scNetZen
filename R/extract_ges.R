@@ -1,44 +1,4 @@
 
-# extract_cluster_ges = function(sample_cluster_barcode,
-#                                ges,
-#                                min_n_cells_per_cluster = 5)
-#   # Slave function
-#   #Input: a list (sample, cluster, barcodes)
-#   #Output: list(cluster_ges_sum, cluster_ges_sum_replicates)
-#
-# {
-#   sample = sample_cluster_barcode[["sample"]]
-#   cluster = sample_cluster_barcode[["cluster"]]
-#   cluster_barcodes = sample_cluster_barcode[["cluster_barcodes"]]
-#   sample_index = sample_cluster_barcode[["i"]]
-#   cluster_index = sample_cluster_barcode[["j"]]
-#   n_replicates = sample_cluster_barcode[["n_replicates"]]
-#
-#   out = extract_ges(barcodes = cluster_barcodes,
-#                      ges = ges,
-#                      barcode_group_name = paste0(sample, "^", cluster),
-#                      min_n_cells = min_n_cells_per_cluster,
-#                      n_replicates = n_replicates
-#   )
-#
-#   cluster_ges_sum = out[["barcodes_ges_sum"]]
-#   cluster_ges_sum_replicates = out[["barcodes_ges_sum_replicates"]]
-#   is_null_result = out[["is_null_result"]]
-#     return(
-#       list(
-#         sample = sample,
-#         cluster = cluster,
-#         cluster_ges_sum = cluster_ges_sum,
-#         cluster_ges_sum_replicates = cluster_ges_sum_replicates,
-#         sample_index = sample_index,
-#         cluster_index = cluster_index,
-#         is_null_result = 0
-#       )
-#     )
-#
-# }
-
-
 
 #' Title
 #'
@@ -113,21 +73,34 @@ extract_ges = function(barcodes,
 
  # print(paste("I am", mpi.comm.rank(), "of", mpi.comm.size()))
 
-    barcodes_ges = ges[, barcodes]
+    barcodes_ges_sum_replicates = data.frame(matrix(0., nrow = nrow(ges), ncol = n_replicates))
+
+    if (length(barcodes) == 0)
+    {
+      barcodes_ges_sum = data.frame(barcode_group_name = rep(0,nrow(ges)))
+      rownames(barcodes_ges_sum) = rownames(ges)
+      colnames(barcodes_ges_sum_replicates) = sapply(c(1:n_replicates) , function(k) paste0(barcode_group_name, "^rep_", k))
+      rownames(barcodes_ges_sum_replicates) = rownames(ges)
+
+      return(list(barcodes_ges_sum = barcodes_ges_sum,
+             barcodes_ges_sum_replicates = barcodes_ges_sum_replicates,
+             is_null_result = 1))
+    }
+    barcodes_ges = ges[, barcodes, drop=FALSE]
     #barcodes_ges = as.data.frame(barcodes_ges)
     barcodes_ges_sum = Matrix::rowSums(barcodes_ges)
     barcodes_ges_sum = data.frame(barcodes_ges_sum)
     colnames(barcodes_ges_sum) = barcode_group_name
 
     #make replicate count matrix
-    barcodes_ges_sum_replicates = data.frame(matrix(NA, nrow = nrow(barcodes_ges), ncol = n_replicates))
+    #barcodes_ges_sum_replicates = data.frame(matrix(NA, nrow = nrow(barcodes_ges), ncol = n_replicates))
 
     for (k in c(1:n_replicates))
     {
       barcodes_replicate = sample(barcodes,
                                           size = length(barcodes),
                                           replace = TRUE)
-      barcodes_ges_replicate = barcodes_ges[, barcodes_replicate]
+      barcodes_ges_replicate = barcodes_ges[, barcodes_replicate, drop = FALSE]
       barcodes_ges_sum_replicate = Matrix::rowSums(barcodes_ges_replicate)
       barcodes_ges_sum_replicates[, k] = barcodes_ges_sum_replicate
       colnames(barcodes_ges_sum_replicates)[k] = paste0(barcode_group_name, "^rep_", k)

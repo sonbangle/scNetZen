@@ -9,10 +9,10 @@
 #' @param close_slaves
 #' @param n_replicates
 #' @param min_n_reads_per_cell_group
-#'
 #' @return
-#' @export
 #'
+#'
+#' @export
 #' @examples
 get_cell_group_gene_expression_from_tasks = function(tasks,
                                                      aggregate_out_dir,
@@ -24,7 +24,7 @@ get_cell_group_gene_expression_from_tasks = function(tasks,
                                                      n_replicates = 5,
                                                      min_n_reads_per_cell_group = 20000)
 {
-  ges_list <- read_ges(aggregate_out_dir)[[1]]
+  ges_list <- read_ges(aggregate_out_dir)
   ges = ges_list[[1]]
   gene_names = ges_list[[2]][2]
   if (method == "mpi")
@@ -65,12 +65,19 @@ get_cell_group_gene_expression_from_tasks = function(tasks,
 #' @param outdir output directory
 #' @param prefix prefix to add to the file path, such as sample, sample_replicates, sample_cluster, sample_cluster_duplicates, etc.
 #' @param organism either mouse or human . Use to translate gene ENSM id into normal gene names
-#' @param min_n_reads_per_cell_group Minimal number of reads per cell group threshold to filter
+#' @param min_n_reads_per_cell_group Minimal number of reads per cell group threshold to filter, default = 20000
 #'
-#' @return
+#' @return list a list of cell group expression data frames
+#'
 #' @export
-#'
 #' @examples
+#'
+#'
+
+
+
+
+
 write_cell_group_gene_expression_from_counts = function(cell_group_counts,
                                                         gene_names,
                                                         outdir,
@@ -82,3 +89,5 @@ write_cell_group_gene_expression_from_counts = function(cell_group_counts,
   normalize_and_write_result(out , outdir = outdir , prefix  = prefix, organism)
   return(out)
 }
+
+

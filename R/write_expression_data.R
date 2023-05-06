@@ -103,6 +103,7 @@ normalize_and_write_result = function(formated_ges_list , outdir, prefix  = "sam
   write.table(
     formated_ges_list[["filtered_cell_group_ges_hugo"]],
     file = paste0(outdir, "/", prefix, "_ges_translated.filtered.csv"),
+    sep = "\t",
     quote = FALSE,
     row.names = FALSE
   )
